@@ -3,8 +3,8 @@ Creates enums and resources C# classes to be able to use the Material Design Ico
 
 The generated MaterialDesignIconsEnum.cs file looks like this:
 
-namespace MaterialDesignIcons
-{
+    namespace MaterialDesignIcons
+    {
 	/// <summary>
 	/// Material Design Icons Resources.
 	/// </summary>
