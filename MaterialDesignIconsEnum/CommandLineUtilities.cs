@@ -49,11 +49,14 @@ namespace MaterialDesignIconsEnum
                     name = arg.Substring(0, pos).Trim();
                     value = arg.Substring(pos + 1).Trim();
                 }
-                _positionArguments[i - 1] = arg;
-                
+
                 if (named)
                 {
                     _namedArguments[name] = value;
+                }
+                else
+                {
+                    _positionArguments[i - 1] = arg;
                 }
             }
         }
@@ -82,11 +85,7 @@ namespace MaterialDesignIconsEnum
             }
         }
 
-        public static T GetArgument<T>(IEnumerable<string> arguments, string name, T defaultValue)
-        {
-            return GetArgument(arguments, name, defaultValue, null);
-        }
-
+        public static T GetArgument<T>(IEnumerable<string> arguments, string name, T defaultValue) => GetArgument(arguments, name, defaultValue, null);
         public static T GetArgument<T>(IEnumerable<string> arguments, string name, T defaultValue, IFormatProvider provider)
         {
             if (arguments == null)
@@ -115,46 +114,31 @@ namespace MaterialDesignIconsEnum
             return defaultValue;
         }
 
-        public static T GetArgument<T>(int index, T defaultValue)
-        {
-            return GetArgument(index, defaultValue, null);
-        }
-
+        public static T GetArgument<T>(int index, T defaultValue) => GetArgument(index, defaultValue, null);
         public static T GetArgument<T>(int index, T defaultValue, IFormatProvider provider)
         {
-            string s;
-            if (!_positionArguments.TryGetValue(index, out s))
+            if (!_positionArguments.TryGetValue(index, out string s))
                 return defaultValue;
 
             return ChangeType(s, defaultValue, provider);
         }
 
-        public static object GetArgument(int index, object defaultValue, Type conversionType)
-        {
-            return GetArgument(index, defaultValue, conversionType, null);
-        }
-
+        public static object GetArgument(int index, object defaultValue, Type conversionType) => GetArgument(index, defaultValue, conversionType, null);
         public static object GetArgument(int index, object defaultValue, Type conversionType, IFormatProvider provider)
         {
-            string s;
-            if (!_positionArguments.TryGetValue(index, out s))
+            if (!_positionArguments.TryGetValue(index, out string s))
                 return defaultValue;
 
             return ChangeType(s, conversionType, defaultValue, provider);
         }
 
-        public static T GetArgument<T>(string name, T defaultValue)
-        {
-            return GetArgument(name, defaultValue, null);
-        }
-
+        public static T GetArgument<T>(string name, T defaultValue) => GetArgument(name, defaultValue, null);
         public static T GetArgument<T>(string name, T defaultValue, IFormatProvider provider)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
 
-            string s;
-            if (!_namedArguments.TryGetValue(name, out s))
+            if (!_namedArguments.TryGetValue(name, out string s))
                 return defaultValue;
 
             if (typeof(T) == typeof(bool) && string.IsNullOrEmpty(s))
@@ -168,15 +152,10 @@ namespace MaterialDesignIconsEnum
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
 
-            string s;
-            return _namedArguments.TryGetValue(name, out s);
+            return _namedArguments.TryGetValue(name, out string s);
         }
 
-        public static object GetArgument(string name, object defaultValue, Type conversionType)
-        {
-            return GetArgument(name, defaultValue, conversionType, null);
-        }
-
+        public static object GetArgument(string name, object defaultValue, Type conversionType) => GetArgument(name, defaultValue, conversionType, null);
         public static object GetArgument(string name, object defaultValue, Type conversionType, IFormatProvider provider)
         {
             if (name == null)
@@ -185,8 +164,7 @@ namespace MaterialDesignIconsEnum
             if (conversionType == null)
                 throw new ArgumentNullException(nameof(conversionType));
 
-            string s;
-            if (!_namedArguments.TryGetValue(name, out s))
+            if (!_namedArguments.TryGetValue(name, out string s))
                 return defaultValue;
 
             if (conversionType == typeof(bool) && string.IsNullOrEmpty(s))
@@ -204,10 +182,7 @@ namespace MaterialDesignIconsEnum
             return value.Length == 0 ? null : value;
         }
 
-        private static T ChangeType<T>(object value, T defaultValue, IFormatProvider provider)
-        {
-            return (T)ChangeType(value, typeof(T), defaultValue, provider);
-        }
+        private static T ChangeType<T>(object value, T defaultValue, IFormatProvider provider) => (T)ChangeType(value, typeof(T), defaultValue, provider);
 
         private static object ChangeType(object value, Type conversionType, object defaultValue, IFormatProvider provider)
         {
