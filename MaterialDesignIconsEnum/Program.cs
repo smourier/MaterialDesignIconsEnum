@@ -9,9 +9,9 @@ namespace MaterialDesignIconsEnum
 {
     class Program
     {
-        private static bool OptionHelp;
-        private static string OptionInputPath;
-        private static string OptionOutputPath;
+        private static bool _optionHelp;
+        private static string _optionInputPath;
+        private static string _optionOutputPath;
 
         static void Main(string[] args)
         {
@@ -37,19 +37,19 @@ namespace MaterialDesignIconsEnum
             Console.WriteLine("MaterialDesignIconsEnum - Version 1.1.0 Copyright (C) Simon Mourier 2016-" + DateTime.Now.Year + ". All rights reserved.");
             Console.WriteLine("");
 
-            OptionHelp = CommandLineUtilities.GetArgument("?", false);
-            OptionInputPath = CommandLineUtilities.GetArgument<string>(0, null);
-            OptionOutputPath = CommandLineUtilities.GetArgument(1, "MaterialDesignIcons.cs");
+            _optionHelp = CommandLineUtilities.GetArgument("?", false);
+            _optionInputPath = CommandLineUtilities.GetArgument<string>(0, null);
+            _optionOutputPath = CommandLineUtilities.GetArgument(1, "MaterialDesignIcons.cs");
 
-            if (OptionHelp || Environment.GetCommandLineArgs().Length == 1)
+            if (_optionHelp || Environment.GetCommandLineArgs().Length == 1)
             {
                 Console.WriteLine("Format is MaterialDesignIconsEnum.exe <materialdesignicons.less input file path> <output .cs file>");
                 Console.WriteLine("");
                 return;
             }
 
-            Console.WriteLine("Input file path: " + OptionInputPath);
-            Console.WriteLine("Output file path: " + OptionOutputPath);
+            Console.WriteLine("Input file path: " + _optionInputPath);
+            Console.WriteLine("Output file path: " + _optionOutputPath);
             bool noStrings = CommandLineUtilities.GetArgument("nostrings", false);
             bool noChars = CommandLineUtilities.GetArgument("nochars", false);
             bool noEnums = CommandLineUtilities.GetArgument("noenums", false);
@@ -61,7 +61,7 @@ namespace MaterialDesignIconsEnum
             }
 
             var enums = new List<Tuple<string, string, string>>();
-            using (var reader = new StreamReader(OptionInputPath, Encoding.Default))
+            using (var reader = new StreamReader(_optionInputPath, Encoding.Default))
             {
                 do
                 {
@@ -112,7 +112,7 @@ namespace MaterialDesignIconsEnum
             Console.WriteLine("Variables detected: " + enums.Count);
 
             Console.WriteLine();
-            using (var iw = new StreamWriter(OptionOutputPath, false))
+            using (var iw = new StreamWriter(_optionOutputPath, false))
             {
                 var writer = new IndentedTextWriter(iw);
                 writer.WriteLine("//------------------------------------------------------------------------------");
@@ -177,7 +177,7 @@ namespace MaterialDesignIconsEnum
                         writer.WriteLine("/// <summary>");
                         writer.WriteLine("/// " + kv.Item3 + " glyph (" + kv.Item2 + ").");
                         writer.WriteLine("/// </summary>");
-                        writer.WriteLine("public const char " + GetValidIdentifier(kv.Item1) + " = '\\u" + kv.Item2 + "';");
+                        writer.WriteLine("public const char " + GetValidIdentifier(kv.Item1) + " = '\\u" + ToUnicode(kv.Item2) + "';");
                         if (i < (enums.Count - 1))
                         {
                             writer.WriteLine();
@@ -207,7 +207,7 @@ namespace MaterialDesignIconsEnum
                         writer.WriteLine("/// <summary>");
                         writer.WriteLine("/// " + kv.Item3 + " glyph (" + kv.Item2 + ").");
                         writer.WriteLine("/// </summary>");
-                        writer.WriteLine("public const string " + GetValidIdentifier(kv.Item1) + " = \"\\u" + kv.Item2 + "\";");
+                        writer.WriteLine("public const string " + GetValidIdentifier(kv.Item1) + " = \"\\u" + ToUnicode(kv.Item2) + "\";");
                         if (i < (enums.Count - 1))
                         {
                             writer.WriteLine();
@@ -222,6 +222,14 @@ namespace MaterialDesignIconsEnum
                 writer.WriteLine("}");
             }
             Console.WriteLine("Output file was successfully written.");
+        }
+
+        static string ToUnicode(string code)
+        {
+            if (code.Length == 4)
+                return code;
+
+            return "00" + code;
         }
 
         static string Camel(string s)
